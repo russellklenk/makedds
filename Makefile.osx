@@ -15,7 +15,7 @@ PROJ_LDFLAGS  =
 all:: ${TARGET}
 
 ${TARGET}: ${OBJECTS}
-	${CC} ${LDFLAGS} ${PROJ_LDFLAGS} -o $@ $< ${LIBRARIES}
+	${CC} ${LDFLAGS} ${PROJ_LDFLAGS} -o $@ $^ ${LIBRARIES}
 
 ${OBJECTS}: %.o: %.cpp ${DEPENDENCIES}
 	${CC} ${INCLUDE_DIRS} ${CCFLAGS} ${PROJ_CCFLAGS} -o $@ -c $<
