@@ -1,0 +1,32 @@
+TARGET        = makedds
+LIBRARIES     = -lstdc++ -lm 
+HEADERS       = $(wildcard include/*.hpp)
+SOURCES       = $(wildcard src/*.cpp)
+OBJECTS       = ${SOURCES:.cpp=.o}
+DEPENDENCIES  = ${SOURCES:.cpp=.dep}
+INCLUDE_DIRS  = -I. -Iinclude
+LIBRARY_DIRS  = -Llib
+PROJ_WARNINGS = -Wall -Wextra
+PROJ_CCFLAGS  = -ggdb -std=c++0x -O3 -fstrict-aliasing -D __STDC_FORMAT_MACROS
+PROJ_LDFLAGS  =
+
+.PHONY: all clean distclean output
+
+all:: ${TARGET}
+
+${TARGET}: ${OBJECTS}
+	${CC} ${LDFLAGS} ${PROJ_LDFLAGS} -o $@ $< ${LIBRARIES}
+
+${OBJECTS}: %.o: %.cpp ${DEPENDENCIES}
+	${CC} ${INCLUDE_DIRS} ${CCFLAGS} ${PROJ_CCFLAGS} -o $@ -c $<
+
+${DEPENDENCIES}: %.dep: %.cpp ${HEADERS} Makefile.osx
+	${CC} ${INCLUDE_DIRS} ${CCFLAGS} ${PROJ_CCFLAGS} -MM $< > $@
+
+output:: ${TARGET}
+	
+clean::
+	rm -f *~ *.o *.dep src/*~ src/*.o src/*.dep ${TARGET}
+
+distclean:: clean
+
