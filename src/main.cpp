@@ -70,7 +70,7 @@ static void init_dds_header_dxt10(data::dds_header_dxt10_t *head)
 static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf)
 {
     ddspf->Size        = sizeof(data::dds_pixelformat_t);
-    ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHA;
+    ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHA | data::DDPF_FOURCC;
     ddspf->FourCC      = data::fourcc_le('D','X','1','0');
     ddspf->RGBBitCount = 32;
     ddspf->BitMaskR    = 0x000000FF;
@@ -90,8 +90,8 @@ static void init_dds_header(data::dds_header_t *head, int w, int h, int d, int l
 {
     head->Size      = sizeof(data::dds_header_t);
     head->Flags     = 0; // dds_header_flags_e
-    head->Height    = uint32_t(w);
-    head->Width     = uint32_t(h);
+    head->Height    = uint32_t(h);
+    head->Width     = uint32_t(w);
     head->Pitch     = uint32_t(w * 4);        // use data::dds_pitch(...)
     head->Depth     = uint32_t(d);
     head->Levels    = l > 1 ? uint32_t(l) : 0;
