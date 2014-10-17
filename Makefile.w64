@@ -1,4 +1,4 @@
-CC            = i686-w64-mingw32-gcc
+CC            = x86_64-w64-mingw32-gcc
 TARGET        = makedds.exe
 LIBRARIES     = -lstdc++ -lm
 HEADERS       = $(wildcard include/*.hpp)
@@ -21,7 +21,7 @@ ${TARGET}: ${OBJECTS}
 ${OBJECTS}: %.o: %.cpp ${DEPENDENCIES}
 	${CC} ${INCLUDE_DIRS} ${CCFLAGS} ${PROJ_CCFLAGS} -o $@ -c $<
 
-${DEPENDENCIES}: %.dep: %.cpp ${HEADERS} Makefile.w32
+${DEPENDENCIES}: %.dep: %.cpp ${HEADERS} Makefile.w64
 	${CC} ${INCLUDE_DIRS} ${CCFLAGS} ${PROJ_CCFLAGS} -MM $< > $@
 
 output:: ${TARGET}
