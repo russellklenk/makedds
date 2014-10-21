@@ -1044,7 +1044,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R10G10B10A2_UNORM:
         case data::DXGI_FORMAT_R10G10B10A2_UINT:
         case data::DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x000003FFU;
             ddspf->BitMaskG    = 0x000FFC00U;
@@ -1057,7 +1057,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R8G8B8A8_UINT:
         case data::DXGI_FORMAT_R8G8B8A8_SNORM:
         case data::DXGI_FORMAT_R8G8B8A8_SINT:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x000000FFU;
             ddspf->BitMaskG    = 0x0000FF00U;
@@ -1065,7 +1065,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0xFF000000U;
             break;
         case data::DXGI_FORMAT_R16G16_TYPELESS:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x0000FFFFU;
             ddspf->BitMaskG    = 0xFFFF0000U;
@@ -1075,7 +1075,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R32_TYPELESS:
         case data::DXGI_FORMAT_R32_UINT:
         case data::DXGI_FORMAT_R32_SINT:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0xFFFFFFFFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1083,7 +1083,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000000U;
             break;
         case data::DXGI_FORMAT_R24G8_TYPELESS:
-            ddspf->Flags       = data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x00FFFFFFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1095,7 +1095,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R8G8_UINT:
         case data::DXGI_FORMAT_R8G8_SNORM:
         case data::DXGI_FORMAT_R8G8_SINT:
-            ddspf->Flags       = data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x000000FFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1103,7 +1103,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x0000FF00U;
             break;
         case data::DXGI_FORMAT_A8P8:
-            ddspf->Flags       = data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_LUMINANCE | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x0000FF00U;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1115,7 +1115,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R16_UINT:
         case data::DXGI_FORMAT_R16_SNORM:
         case data::DXGI_FORMAT_R16_SINT:
-            ddspf->Flags       = data::DDPF_LUMINANCE;
+            ddspf->Flags      |= data::DDPF_LUMINANCE;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x0000FFFFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1129,7 +1129,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_R8_SINT:
         case data::DXGI_FORMAT_A8_UNORM:
         case data::DXGI_FORMAT_P8:
-            ddspf->Flags       = data::DDPF_LUMINANCE;
+            ddspf->Flags      |= data::DDPF_LUMINANCE;
             ddspf->RGBBitCount = 8;
             ddspf->BitMaskR    = 0x000000FFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1137,7 +1137,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000000U;
             break;
         case data::DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x00FFFFFFU;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1145,7 +1145,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000000U;
             break;
         case data::DXGI_FORMAT_X24_TYPELESS_G8_UINT:
-            ddspf->Flags       = data::DDPF_ALPHA;
+            ddspf->Flags      |= data::DDPF_ALPHA;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x00000000U;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1153,7 +1153,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0xFF000000U;
             break;
         case data::DXGI_FORMAT_R1_UNORM:
-            ddspf->Flags       = data::DDPF_ALPHA;
+            ddspf->Flags      |= data::DDPF_ALPHA;
             ddspf->RGBBitCount = 1;
             ddspf->BitMaskR    = 0x00000000U;
             ddspf->BitMaskG    = 0x00000000U;
@@ -1161,7 +1161,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000001U;
             break;
         case data::DXGI_FORMAT_R8G8_B8G8_UNORM:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x000000FFU;
             ddspf->BitMaskG    = 0x0000FF00U;
@@ -1169,7 +1169,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x0000FF00U;
             break;
         case data::DXGI_FORMAT_G8R8_G8B8_UNORM:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x0000FF00U;
             ddspf->BitMaskG    = 0x000000FFU;
@@ -1179,7 +1179,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_B8G8R8A8_TYPELESS:
         case data::DXGI_FORMAT_B8G8R8A8_UNORM:
         case data::DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x00FF0000U;
             ddspf->BitMaskG    = 0x0000FF00U;
@@ -1189,7 +1189,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
         case data::DXGI_FORMAT_B8G8R8X8_TYPELESS:
         case data::DXGI_FORMAT_B8G8R8X8_UNORM:
         case data::DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x00FF0000U;
             ddspf->BitMaskG    = 0x0000FF00U;
@@ -1197,7 +1197,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000000U;
             break;
         case data::DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 32;
             ddspf->BitMaskR    = 0x000001FFU;
             ddspf->BitMaskG    = 0x0003FE00U;
@@ -1205,7 +1205,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0xF8000000U;
             break;
         case data::DXGI_FORMAT_B5G6R5_UNORM:
-            ddspf->Flags       = data::DDPF_RGB;
+            ddspf->Flags      |= data::DDPF_RGB;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x0000F800U;
             ddspf->BitMaskG    = 0x000007E0U;
@@ -1213,7 +1213,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00000000U;
             break;
         case data::DXGI_FORMAT_B5G5R5A1_UNORM:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x00007C00U;
             ddspf->BitMaskG    = 0x000003E0U;
@@ -1221,7 +1221,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             ddspf->BitMaskA    = 0x00008000U;
             break;
         case data::DXGI_FORMAT_B4G4R4A4_UNORM:
-            ddspf->Flags       = data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
+            ddspf->Flags      |= data::DDPF_RGB | data::DDPF_ALPHAPIXELS;
             ddspf->RGBBitCount = 16;
             ddspf->BitMaskR    = 0x00000F00U;
             ddspf->BitMaskG    = 0x000000F0U;
@@ -1230,7 +1230,7 @@ static void init_dds_pixelformat(data::dds_pixelformat_t *ddspf, dds_params_t co
             break;
         default:
             // don't specify any information.
-            ddspf->Flags       = data::DDPF_NONE;
+            ddspf->Flags      |= data::DDPF_NONE;
             ddspf->RGBBitCount = 0;
             ddspf->BitMaskR    = 0x00000000U;
             ddspf->BitMaskG    = 0x00000000U;
