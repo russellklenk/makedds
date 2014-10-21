@@ -412,6 +412,7 @@ static bool load_image(FILE *fp, char const *infile, image_info_t &image)
             image.Height   = h;
             image.Channels = n;
             image.HDR      = true;
+            return true;
         }
         else
         {
@@ -766,7 +767,11 @@ static bool process_json_node(FILE *fp, data::json_item_t *node, dds_params_t &p
                 else fprintf(fp, "WARNING: Unexpected null field \'%s\'.\n", node->Key);
             }
             return true;
+
+        default:
+            break;
     }
+    return false;
 }
 
 /// @summary Parses a JSON string to extract DDS output parameters.
@@ -792,7 +797,6 @@ static bool params_from_json(FILE *fp, char *json, size_t json_size, bool free_b
         json_size  = strlen(json);
     }
 
-    data::json_item_t  *node = NULL;
     data::json_item_t  *root = NULL;
     data::json_error_t  error;
     if (!data::json_parse(json, json_size, NULL, &root, &error))

@@ -275,7 +275,11 @@ static inline data::json_item_t* json_alloc(data::json_allocator_t *a)
 /// @param a The allocator implementation used to allocate the node.
 static inline void json_free(data::json_item_t *node, data::json_allocator_t *a)
 {
-    if (node) a->Release(node, sizeof(data::json_item_t), a->Context);
+    if (node != NULL)
+    {
+        if (a != NULL) a->Release(node, sizeof(data::json_item_t), a->Context);
+        else libc_free(node, sizeof(data::json_item_t), NULL);
+    }
 }
 
 #if 0
