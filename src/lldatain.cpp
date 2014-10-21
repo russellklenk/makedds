@@ -1364,10 +1364,28 @@ size_t data::dds_array_count(data::dds_header_t const *header, data::dds_header_
 {
     if (header && header_ex)
     {
+        size_t multiplier = 1;
+        if (header->Caps2 & data::DDSCAPS2_CUBEMAP)
+        {   // DX10+ cubemaps must specify all faces.
+            multiplier = 6;
+        }
         // DX10 extended header is required for surface arrays.
-        return size_t(header_ex->ArraySize);
+        return size_t(header_ex->ArraySize) * multiplier;
     }
-    else if (header) return 1;
+    else if (header)
+    {
+        size_t nfaces = 1;
+        if (header->Caps2 & data::DDSCAPS2_CUBEMAP)
+        {   // non-DX10 cubemaps may specify only some faces.
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_POSITIVEX) nfaces++;
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_NEGATIVEX) nfaces++;
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_POSITIVEY) nfaces++;
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_NEGATIVEY) nfaces++;
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_POSITIVEZ) nfaces++;
+            if (header->Caps2 & data::DDSCAPS2_CUBEMAP_NEGATIVEZ) nfaces++;
+        }
+        return nfaces;
+    }
     else return 0;
 }
 

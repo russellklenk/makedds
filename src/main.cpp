@@ -604,7 +604,7 @@ static void init_params(dds_params_t &params, char *buffer)
     params.Height        = 0;
     params.BaseWidth     = 0;
     params.BaseHeight    = 0;
-    params.MaxMipLevels  = 1;
+    params.MaxMipLevels  = 0;
     params.ArraySize     = 1;
     params.Format        = data::DXGI_FORMAT_UNKNOWN;
     params.AlphaMode     = data::DDS_ALPHA_MODE_UNKNOWN;
@@ -860,6 +860,11 @@ static bool params_from_json(FILE *fp, char *json, size_t json_size, bool free_b
         {   // use the default format for the image.
             params.Format  = image.Format;
         }
+        if (params.AlphaMode == data::DDS_ALPHA_MODE_UNKNOWN)
+        {   // use the alpha mode based on the channel count.
+            if (image.Channels == 4) params.AlphaMode = data::DDS_ALPHA_MODE_PREMULTIPLIED;
+            else params.AlphaMode = data::DDS_ALPHA_MODE_OPAQUE;
+        }
     }
     else
     {   // more than one image, so defer loading until we generate the DDS.
@@ -982,7 +987,7 @@ static void modify_params(int argc, char **argv, dds_params_t &params)
         params.Width  = pow2_ge(params.Width , 1);
         params.Height = pow2_ge(params.Height, 1);
     }
-    if (params.MaxMipLevels == 0)
+    if (params.Mipmaps && params.MaxMipLevels == 0 && params.Width > 0 && params.Height > 0)
     {   // compute all the way down to 1x1.
         size_t lw = params.Width;
         size_t lh = params.Height;
@@ -1392,7 +1397,7 @@ static bool write_cubemap_image(FILE *fp, FILE *dds, dds_params_t &params)
                     if (face.Channels == 4) params.AlphaMode = data::DDS_ALPHA_MODE_PREMULTIPLIED;
                     else params.AlphaMode = data::DDS_ALPHA_MODE_OPAQUE;
                 }
-                if (params.MaxMipLevels == 0)
+                if (params.Mipmaps && params.MaxMipLevels == 0)
                 {   // compute all the way down to 1x1.
                     size_t lw = params.Width;
                     size_t lh = params.Height;
@@ -1464,7 +1469,7 @@ static bool write_array_image(FILE *fp, FILE *dds, dds_params_t &params)
                         if (image.Channels == 4) params.AlphaMode = data::DDS_ALPHA_MODE_PREMULTIPLIED;
                         else params.AlphaMode = data::DDS_ALPHA_MODE_OPAQUE;
                     }
-                    if (params.MaxMipLevels == 0)
+                    if (params.Mipmaps && params.MaxMipLevels == 0)
                     {   // compute all the way down to 1x1.
                         size_t lw = params.Width;
                         size_t lh = params.Height;
