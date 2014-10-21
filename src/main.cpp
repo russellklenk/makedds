@@ -837,6 +837,12 @@ static bool params_from_json(FILE *fp, char *json, size_t json_size, bool free_b
     {   // default to the number of source files specified.
         params.ArraySize = params.SourceCount;
     }
+    if (params.Volume && params.Mipmaps)
+    {
+        fprintf(fp, "WARNING: Mipmaps are not currently supported for volume images and will not be output.\n");
+        params.Mipmaps  = false;
+        params.MaxMipLevels = 1;
+    }
 
     if (params.SourceCount == 1 && !params.Volume)
     {   // if there's only one source file, load it now.
@@ -982,10 +988,12 @@ static void modify_params(int argc, char **argv, dds_params_t &params)
         size_t lh = params.Height;
         while (lw > 1 || lh > 1)
         {
+            params.MaxMipLevels++;
             lw >>= 1; if (lw == 0) lw = 1;
             lh >>= 1; if (lh == 0) lh = 1;
-            params.MaxMipLevels++;
         }
+        // include the base level in the count.
+        params.MaxMipLevels++;
     }
 }
 
@@ -1390,10 +1398,12 @@ static bool write_cubemap_image(FILE *fp, FILE *dds, dds_params_t &params)
                     size_t lh = params.Height;
                     while (lw > 1 || lh > 1)
                     {
+                        params.MaxMipLevels++;
                         lw >>= 1; if (lw == 0) lw = 1;
                         lh >>= 1; if (lh == 0) lh = 1;
-                        params.MaxMipLevels++;
                     }
+                    // include the base level in the count.
+                    params.MaxMipLevels++;
                 }
             }
 
@@ -1460,10 +1470,12 @@ static bool write_array_image(FILE *fp, FILE *dds, dds_params_t &params)
                         size_t lh = params.Height;
                         while (lw > 1 || lh > 1)
                         {
+                            params.MaxMipLevels++;
                             lw >>= 1; if (lw == 0) lw = 1;
                             lh >>= 1; if (lh == 0) lh = 1;
-                            params.MaxMipLevels++;
                         }
+                        // include the base level in the count.
+                        params.MaxMipLevels++;
                     }
                 }
                 if (!write_image_chain(fp, dds, params, image))
@@ -1493,35 +1505,38 @@ static bool write_array_image(FILE *fp, FILE *dds, dds_params_t &params)
 /// @return true if the entire volume image was written to the DDS output stream.
 static bool write_volume_image(FILE *fp, FILE *dds, dds_params_t &params)
 {
-    image_info_t slice;
-    size_t       index  = 0;
-    if (load_source(fp, params, index++, slice))
-    {   // note that mipmaps are currently not supported for volumes.
-        if (params.Width  == 0) params.Width  = size_t(slice.Width);
-        if (params.Height == 0) params.Height = size_t(slice.Height);
-        params.BaseWidth   = size_t(slice.Width);
-        params.BaseHeight  = size_t(slice.Height);
-        
-        if (params.Format == data::DXGI_FORMAT_UNKNOWN)
-        {   // set the format to that of the base slice.
-            params.Format  = slice.Format;
-        }
-        if (params.AlphaMode == data::DDS_ALPHA_MODE_UNKNOWN)
-        {   // set the alpha mode based on the number of source channels.
-            if (slice.Channels == 4) params.AlphaMode = data::DDS_ALPHA_MODE_PREMULTIPLIED;
-            else params.AlphaMode = data::DDS_ALPHA_MODE_OPAQUE;
-        }
-        if (params.ForcePow2)
-        {   // set Width and Height to the nearest power of 2.
-            params.Width   = pow2_ge(params.Width , 1);
-            params.Height  = pow2_ge(params.Height, 1);
-        }
+    params.SourceIndex = 0;
+    for (size_t i = 0, n = params.SourceCount; i < n; ++i)
+    {
+        image_info_t slice;
+        if (load_next_source(fp, params, slice))
+        {
+            if (i == 0)
+            {   // set any 'default to source' parameters.
+                // note that volume images don't currently support mipmaps.
+                if (params.Width  == 0) params.Width  = size_t(slice.Width);
+                if (params.Height == 0) params.Height = size_t(slice.Height);
+                params.BaseWidth   = size_t(slice.Width);
+                params.BaseHeight  = size_t(slice.Height);
+                
+                if (params.Format == data::DXGI_FORMAT_UNKNOWN)
+                {   // set the format to that of the base slice.
+                    params.Format  = slice.Format;
+                }
+                if (params.AlphaMode == data::DDS_ALPHA_MODE_UNKNOWN)
+                {   // set the alpha mode based on the number of source channels.
+                    if (slice.Channels == 4) params.AlphaMode = data::DDS_ALPHA_MODE_PREMULTIPLIED;
+                    else params.AlphaMode = data::DDS_ALPHA_MODE_OPAQUE;
+                }
+                if (params.ForcePow2)
+                {   // set Width and Height to the nearest power of 2.
+                    params.Width   = pow2_ge(params.Width , 1);
+                    params.Height  = pow2_ge(params.Height, 1);
+                }
+            }
 
-        bool  resize = params.Width != params.BaseWidth || params.Height != params.BaseHeight;
-        while (index < params.SourceCount)
-        {   // write the highest-resolution version of each slice to the DDS.
-            if (resize)
-            {   // explicit resample requested, or we need to force power-of-two.
+            if (params.Width != params.BaseWidth || params.Height != params.BaseHeight)
+            {   // explicit resample requested, or we need to force a power-of-two.
                 image_info_t out;
                 if (resize_image(fp, out, slice, params.Width, params.Height) == false)
                 {   // resize_image() outputs error messages.
@@ -1530,25 +1545,20 @@ static bool write_volume_image(FILE *fp, FILE *dds, dds_params_t &params)
                 free_image(slice);
                 slice = out;
             }
+
+            // write the slice data out to the DDS file.
             size_t pitch = data::dds_pitch(params.Format, params.Width);
             size_t nb    = pitch  * params.Height;
             fwrite(slice.Pixels, nb, 1, dds);
             free_image(slice);
-
-            // load the next slice image.
-            if (!load_source(fp, params, index++, slice))
-            {
-                fprintf(fp, "ERROR: Unable to load slice %u/%u (\'%s\').\n", unsigned(index), unsigned(params.SourceCount), params.SourceFiles[index]);
-                return false;
-            }
         }
-        return true;
+        else
+        {
+            fprintf(fp, "ERROR: Unable to load slice %u/%u (\'%s\').\n", unsigned(i), unsigned(n), params.SourceFiles[i]);
+            return false;
+        }
     }
-    else
-    {
-        fprintf(fp, "ERROR: Unable to load the first slice of the volume.\n");
-        return false;
-    }
+    return true;
 }
 
 /*////////////////////////
